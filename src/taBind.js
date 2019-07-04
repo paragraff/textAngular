@@ -280,6 +280,10 @@ angular.module('textAngular.taBind', ['textAngular.factories', 'textAngular.DOM'
                 throw ('textAngular Error: attempting to update non-editable taBind');
             };
 
+            var _compileValidHtml = function () {
+                return ngModel.$parsers.reduce(function (result, parser) {return parser(result);}, _compileHtml());
+            };
+
             var selectorClickHandler = function(event){
                 // emit the element-select event, pass the element
                 scope.$emit('ta-element-select', this);
@@ -309,7 +313,7 @@ angular.module('textAngular.taBind', ['textAngular.factories', 'textAngular.DOM'
                 }else{
                     _reApplyOnSelectorHandlers();
                     if(ngModel.$viewValue !== _val){
-                        ngModel.$setViewValue(_val);
+                        ngModel.$setViewValue(_compileValidHtml());
                         if(triggerUndo) ngModel.$undoManager.push(_val);
                     }
                 }
@@ -385,7 +389,7 @@ angular.module('textAngular.taBind', ['textAngular.factories', 'textAngular.DOM'
                 if(!_isContentEditable){
                     // if a textarea or input just add in change and blur handlers, everything else is done by angulars input directive
                     element.on('change blur', scope.events.change = scope.events.blur = function(){
-                        if(!_isReadonly) ngModel.$setViewValue(_compileHtml());
+                        if(!_isReadonly) ngModel.$setViewValue(_compileValidHtml());
                     });
 
                     element.on('keydown', scope.events.keydown = function(event, eventData){
@@ -698,7 +702,7 @@ angular.module('textAngular.taBind', ['textAngular.factories', 'textAngular.DOM'
 
                             taSelection.insertHtml(text, element[0]);
                             $timeout(function(){
-                                ngModel.$setViewValue(_compileHtml());
+                                ngModel.$setViewValue(_compileValidHtml());
                                 _processingPaste = false;
                                 element.removeClass('processing-paste');
                             }, 0);
@@ -762,7 +766,7 @@ angular.module('textAngular.taBind', ['textAngular.factories', 'textAngular.DOM'
                     element.on('cut', scope.events.cut = function(e){
                         // timeout to next is needed as otherwise the paste/cut event has not finished actually changing the display
                         if(!_isReadonly) $timeout(function(){
-                            ngModel.$setViewValue(_compileHtml());
+                            ngModel.$setViewValue(_compileValidHtml());
                         }, 0);
                         else e.preventDefault();
                     });
@@ -927,7 +931,7 @@ angular.module('textAngular.taBind', ['textAngular.factories', 'textAngular.DOM'
                                         }
                                     }
                                 }
-                                var val = _compileHtml();
+                                var val = _compileValidHtml();
                                 if(_defaultVal !== '' && (val.trim() === '' || val.trim() === '<br>')){
                                     _setInnerHTML(_defaultVal);
                                     taSelection.setSelectionToElementStart(element.children()[0]);
@@ -971,7 +975,7 @@ angular.module('textAngular.taBind', ['textAngular.factories', 'textAngular.DOM'
                                     //console.log('_setViewValue');
                                     //console.log('old:', ngModel.$viewValue);
                                     //console.log('new:', _val);
-                                    _setViewValue(_val, true);
+                                    _setViewValue(_compileValidHtml(), true);
                                 }
                                 // if the savedSelection marker is gone at this point, we cannot restore the selection!!!
                                 //console.log('rangy.restoreSelection', ngModel.$viewValue.length, _savedSelection);
