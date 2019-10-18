@@ -658,7 +658,11 @@ angular.module('textAngularSetup', [])
         iconclass: 'fa fa-outdent',
         tooltiptext: taTranslations.outdent.tooltip,
         action: function(){
-            return this.$editor().wrapSelection("outdent", null);
+          const selection = taSelection.getSelection()
+          if (selection.collapsed) {
+            taSelection.setSelectionToElementEnd(selection.start.element)
+          }
+          return this.$editor().wrapSelection("outdent", null)
         },
         activeState: function(){
             return false;
