@@ -3109,7 +3109,11 @@ textAngular.directive("textAngular", [
 
                     /* istanbul ignore if: catches only if near bottom of editor */
                     if(spaceAboveImage < 51) {
-                        scope.displayElements.popover.css('top', _el[0].offsetTop + _el[0].offsetHeight + scope.displayElements.scrollWindow[0].scrollTop + 'px');
+                        var bottomPosition = _el[0].offsetTop + _el[0].offsetHeight + scope.displayElements.scrollWindow[0].scrollTop
+                        if ((bottomPosition + 54) > scope.displayElements.text[0].clientHeight) {
+                          bottomPosition -= bottomPosition + 54 - scope.displayElements.text[0].clientHeight
+                        }
+                        scope.displayElements.popover.css('top', bottomPosition + 'px');
                         scope.displayElements.popover.removeClass('top').addClass('bottom');
                     } else {
                         scope.displayElements.popover.css('top', _el[0].offsetTop - 54 + scope.displayElements.scrollWindow[0].scrollTop + 'px');

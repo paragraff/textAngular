@@ -674,7 +674,11 @@ angular.module('textAngularSetup', [])
         iconclass: 'fa fa-outdent',
         tooltiptext: taTranslations.outdent.tooltip,
         action: function(){
-            return this.$editor().wrapSelection("outdent", null);
+          const selection = taSelection.getSelection()
+          if (selection.collapsed) {
+            taSelection.setSelectionToElementEnd(selection.start.element)
+          }
+          return this.$editor().wrapSelection("outdent", null)
         },
         activeState: function(){
             return false;
@@ -4139,7 +4143,11 @@ textAngular.directive("textAngular", [
 
                     /* istanbul ignore if: catches only if near bottom of editor */
                     if(spaceAboveImage < 51) {
-                        scope.displayElements.popover.css('top', _el[0].offsetTop + _el[0].offsetHeight + scope.displayElements.scrollWindow[0].scrollTop + 'px');
+                        var bottomPosition = _el[0].offsetTop + _el[0].offsetHeight + scope.displayElements.scrollWindow[0].scrollTop
+                        if ((bottomPosition + 54) > scope.displayElements.text[0].clientHeight) {
+                          bottomPosition -= bottomPosition + 54 - scope.displayElements.text[0].clientHeight
+                        }
+                        scope.displayElements.popover.css('top', bottomPosition + 'px');
                         scope.displayElements.popover.removeClass('top').addClass('bottom');
                     } else {
                         scope.displayElements.popover.css('top', _el[0].offsetTop - 54 + scope.displayElements.scrollWindow[0].scrollTop + 'px');
