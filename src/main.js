@@ -418,10 +418,10 @@ textAngular.directive("textAngular", [
                 }
 
                 if(attrs.taPaste){
-                    scope._pasteHandler = function(_html){
-                        return $parse(attrs.taPaste)(scope.$parent, {$html: _html});
+                    scope._pasteHandler = function(_html, _event){
+                        return $parse(attrs.taPaste)(scope.$parent, {$html: _html, $event: _event});
                     };
-                    scope.displayElements.text.attr('ta-paste', '_pasteHandler($html)');
+                    scope.displayElements.text.attr('ta-paste', '_pasteHandler($html, $event)');
                 }
 
                 // compile the scope with the text and html elements only - if we do this with the main element it causes a compile loop

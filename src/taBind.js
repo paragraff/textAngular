@@ -692,7 +692,7 @@ angular.module('textAngular.taBind', ['textAngular.factories', 'textAngular.DOM'
                                 return result;
                             }).replace(/\n|\r\n|\r/g, '<br />').replace(/\t/g, '&nbsp;&nbsp;&nbsp;&nbsp;');
 
-                            if(_pasteHandler) text = _pasteHandler(scope, {$html: text}) || text;
+                            if(_pasteHandler) text = _pasteHandler(scope, {$html: text, $event: event}) || text;
 
                             text = Object.values(taTools)
                             .filter(tool => Reflect.has(tool, 'onElementPaste'))

@@ -2381,7 +2381,7 @@ angular.module('textAngular.taBind', ['textAngular.factories', 'textAngular.DOM'
                                 return result;
                             }).replace(/\n|\r\n|\r/g, '<br />').replace(/\t/g, '&nbsp;&nbsp;&nbsp;&nbsp;');
 
-                            if(_pasteHandler) text = _pasteHandler(scope, {$html: text}) || text;
+                            if(_pasteHandler) text = _pasteHandler(scope, {$html: text, $event: event}) || text;
 
                             text = Object.values(taTools)
                             .filter(tool => Reflect.has(tool, 'onElementPaste'))
@@ -3301,10 +3301,10 @@ textAngular.directive("textAngular", [
                 }
 
                 if(attrs.taPaste){
-                    scope._pasteHandler = function(_html){
-                        return $parse(attrs.taPaste)(scope.$parent, {$html: _html});
+                    scope._pasteHandler = function(_html, _event){
+                        return $parse(attrs.taPaste)(scope.$parent, {$html: _html, $event: _event});
                     };
-                    scope.displayElements.text.attr('ta-paste', '_pasteHandler($html)');
+                    scope.displayElements.text.attr('ta-paste', '_pasteHandler($html, $event)');
                 }
 
                 // compile the scope with the text and html elements only - if we do this with the main element it causes a compile loop
