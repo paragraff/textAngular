@@ -2136,11 +2136,23 @@ function($document, taDOM, $log){
         }
     };
     var api = {
+        getRange: function () {
+          var range = rangy.getSelection().getRangeAt(0);
+          if (
+            range.startContainer !== range.endContainer
+            && range.startContainer.parentNode === range.endContainer.parentNode
+            && range.endOffset === 0
+          ) {
+            range = range.cloneRange();
+            range.setEnd(range.startContainer, range.startContainer.childNodes.length - 1);
+          }
+          return range;
+        },
         getSelection: function(){
             var range;
             try {
                 // catch any errors from rangy and ignore the issue
-                range = rangy.getSelection().getRangeAt(0);
+                range = api.getRange();
             } catch(e) {
                 //console.info(e);
                 return undefined;
@@ -2201,7 +2213,7 @@ function($document, taDOM, $log){
         // if we use the LEFT_ARROW and we are at the special place <span>&#65279;</span> we move the cursor over by one...
         // Chrome and Firefox behave differently so so fix this for Firefox here.  No adjustment needed for Chrome.
         updateLeftArrowKey: function(element) {
-            var range = rangy.getSelection().getRangeAt(0);
+            var range = api.getRange();
             if (range && range.collapsed) {
                 var _nodes = api.getFlattenedDom(range);
                 if (!_nodes.findIndex) return;
@@ -2263,7 +2275,7 @@ function($document, taDOM, $log){
         updateRightArrowKey: function(element) {
             // we do not need to make any adjustments here, so we ignore all this code
             if (false) {
-                var range = rangy.getSelection().getRangeAt(0);
+                var range = api.getRange();
                 if (range && range.collapsed) {
                     var _nodes = api.getFlattenedDom(range);
                     if (!_nodes.findIndex) return;
@@ -2359,7 +2371,7 @@ function($document, taDOM, $log){
             return nodes;
         },
         getOnlySelectedElements: function(){
-            var range = rangy.getSelection().getRangeAt(0);
+            var range = api.getRange();
             var container = range.commonAncestorContainer;
             // Node.TEXT_NODE === 3
             // Node.ELEMENT_NODE === 1
@@ -2374,7 +2386,7 @@ function($document, taDOM, $log){
         },
         // this includes the container element if all children are selected
         getAllSelectedElements: function(){
-            var range = rangy.getSelection().getRangeAt(0);
+            var range = api.getRange();
             var container = range.commonAncestorContainer;
             // Node.TEXT_NODE === 3
             // Node.ELEMENT_NODE === 1
@@ -2466,7 +2478,7 @@ function($document, taDOM, $log){
         insertHtml: function(html, topNode){
             var parent, secondParent, _childI, nodes, i, lastNode, _tempFrag;
             var element = angular.element("<div>" + html + "</div>");
-            var range = rangy.getSelection().getRangeAt(0);
+            var range = api.getRange();
             var frag = _document.createDocumentFragment();
             var children = element[0].childNodes;
             var isInline = true;
