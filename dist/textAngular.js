@@ -2620,29 +2620,6 @@ angular.module('textAngular.taBind', ['textAngular.factories', 'textAngular.DOM'
                                             angular.element(selection).replaceWith(_new);
                                             taSelection.setSelectionToElementStart(_new[0]);
                                         }
-                                    } else {
-                                        // shift + Enter
-                                        var tagName = selection.tagName.toLowerCase();
-                                        //console.log('Shift+Enter', selection.tagName, attrs.taDefaultWrap, selection.innerHTML.trim());
-                                        // For an LI: We see: LI p ....<br><br>
-                                        // For a P: We see: P p ....<br><br>
-                                        // on Safari, the browser ignores the Shift+Enter and acts just as an Enter Key
-                                        // For an LI: We see: LI p <br>
-                                        // For a P: We see: P p <br>
-                                        if((tagName === attrs.taDefaultWrap ||
-                                            tagName === 'li' ||
-                                            tagName === 'pre' ||
-                                            tagName === 'div') &&
-                                            !/.+<br><br>/.test(selection.innerHTML.trim())) {
-                                            var ps = selection.previousSibling;
-                                            //console.log('wrong....', ps);
-                                            // we need to remove this selection and fix the previousSibling up...
-                                            if (ps) {
-                                                ps.innerHTML = ps.innerHTML + '<br><br>';
-                                                angular.element(selection).remove();
-                                                taSelection.setSelectionToElementEnd(ps);
-                                            }
-                                        }
                                     }
                                 }
                                 var val = _compileValidHtml();
